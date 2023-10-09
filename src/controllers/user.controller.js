@@ -1,4 +1,3 @@
-const userSchema = require("../model/user.schema");
 const User = require("../model/user.schema");
 
 /**
@@ -7,7 +6,7 @@ const User = require("../model/user.schema");
  */
 const createUser = async (req, res) => {
   try {
-    const existingUser = await userSchema.findOne({ email: req.body.email });
+    const existingUser = await User.findOne({ email: req.body.email });
 
     if (!existingUser) {
       const newUser = new User({
@@ -46,8 +45,6 @@ const getAllUsers = async (req, res) => {
 const getSingleUsers = async (req, res) => {
   try {
     const singleUser = await User.findOne({ email: req.params.email });
-    console.log("email" + req.params.email);
-    console.log("singleuser:" + singleUser);
     res.status(200).json(singleUser);
   } catch (error) {
     res.status(500).send(error);
@@ -77,7 +74,6 @@ const updateUser = async (req, res) => {
  * for delete single users
  */
 const deleteUser = async (req, res) => {
-    console.log("delete")
   try {
     const userDelete = await User.deleteOne({ email: req.params.email });
     res.status(200).json(userDelete);

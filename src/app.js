@@ -2,13 +2,15 @@ const express = require("express");
 const cors = require("cors");
 require("./config/db");
 const userRouter = require("./routes/user.routes")
+const toyRouter = require("./routes/toy.routes")
 
 const app = express();
 
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use("/api/user", userRouter)
+app.use("/api/users", userRouter)
+app.use("/api/toys", toyRouter)
 
 
 
