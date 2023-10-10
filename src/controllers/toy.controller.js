@@ -13,7 +13,7 @@ const createToy = async (req, res) => {
       sellerImage,
       toyImage,
       category,
-      subCategory,
+      subcategory,
       inStock,
     } = req.body;
     const newToy = new toySchema({
@@ -23,7 +23,7 @@ const createToy = async (req, res) => {
       sellerImage: sellerImage,
       toyImage: toyImage,
       category: category,
-      subcategory: subCategory,
+      subcategory: subcategory,
       inStock: inStock,
     });
     await newToy.save();
@@ -36,11 +36,36 @@ const createToy = async (req, res) => {
 /**
  * (read)
  * for getting all toys
+ * getting all toys by category and subCategory
  */
 const getToys = async (req, res) => {
   try {
-    const toys = await toySchema.find();
-    res.status(200).json(toys);
+    const category = req.query.category;
+    const subcategory = req?.query?.subcategory;
+
+    console.log(category, subcategory);
+
+    if (category) {
+      const toysByCategory = await toySchema.find({
+        category: req.query.category,
+      });
+
+      if (subcategory) {
+        console.log("in");
+        const toysBySubcategory = await toySchema.find({
+          category: req.query.category,
+          subcategory: req?.query?.subcategory,
+        });
+        console.log(toysByCategory);
+        res.status(200).json(toysBySubcategory);
+      } else {
+        res.status(200).json(toysByCategory);
+      }
+    } else {
+      const toys = await toySchema.find();
+
+      res.status(200).json(toys);
+    }
   } catch (error) {
     res.status(500).send(error);
   }
@@ -58,6 +83,12 @@ const getSingleToy = async (req, res) => {
     res.status(500).send(error);
   }
 };
+
+/**
+ * (read)
+ * for getting toys by category and subcategory
+ */
+const getToysByCategoryOrSC = async (req, res) => {};
 
 /**
  * (Update)

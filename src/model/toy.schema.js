@@ -24,7 +24,7 @@ const toySchema = mongoose.Schema({
     require: true,
   },
   inStock: {
-    type: Boolean || String,
+    type: String,
     require: true,
   },
 });
