@@ -1,4 +1,5 @@
 const User = require("../model/user.schema");
+var jwt = require("jsonwebtoken");
 
 /**
  * (Create)
@@ -43,8 +44,11 @@ const getAllUsers = async (req, res) => {
  * for getting single users
  */
 const getSingleUsers = async (req, res) => {
+  63;
   try {
+    console.log(req.params.email);
     const singleUser = await User.findOne({ email: req.params.email });
+    console.log(singleUser);
     res.status(200).json(singleUser);
   } catch (error) {
     res.status(500).send(error);
@@ -82,10 +86,28 @@ const deleteUser = async (req, res) => {
   }
 };
 
+//jwt token sending
+const getJwtToken = async (req, res) => {
+  const user = req.body;
+//  //console.log(user);
+//  const singleUser = await User.findOne({ email: user.email });
+//  //console.log(singleUser);
+//  const role = singleUser?.role
+//console.log(role)
+
+  const token = jwt.sign(user, process.env.SECRET_ACCESS_TOKEN, {
+    expiresIn: "5h",
+  });
+  console.log(token);
+
+  res.send({ token });
+};
+
 module.exports = {
   getAllUsers,
   getSingleUsers,
   updateUser,
   deleteUser,
   createUser,
+  getJwtToken,
 };

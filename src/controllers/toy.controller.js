@@ -6,6 +6,8 @@ const toySchema = require("../model/toy.schema");
  */
 const createToy = async (req, res) => {
   try {
+    console.log(req.body);
+
     const {
       name,
       sellerName,
@@ -15,6 +17,8 @@ const createToy = async (req, res) => {
       category,
       subcategory,
       inStock,
+      description,
+      price,
     } = req.body;
     const newToy = new toySchema({
       name: name,
@@ -25,6 +29,8 @@ const createToy = async (req, res) => {
       category: category,
       subcategory: subcategory,
       inStock: inStock,
+      description: description,
+      price: price,
     });
     await newToy.save();
     res.status(200).json(newToy);
@@ -36,16 +42,42 @@ const createToy = async (req, res) => {
 /**
  * (read)
  * for getting all toys
- * getting all toys by category and subCategory
+ * getting all toys by email, category and subCategory
  */
 const getToys = async (req, res) => {
   try {
     const category = req.query.category;
     const subcategory = req?.query?.subcategory;
+    const email = req?.query?.email;
+    //console.log(email);
 
-    console.log(category, subcategory);
+    if (email) {
+      if (category) {
+        const toysByCategory = await toySchema.find({
+          category: req.query.category,
+          sellerEmail: req.query.email,
+        });
 
-    if (category) {
+        if (subcategory) {
+          const toysBySubcategory = await toySchema.find({
+            category: req.query.category,
+            subcategory: req?.query?.subcategory,
+            sellerEmail: req.query.email,
+          });
+          res.status(200).json(toysBySubcategory);
+        } else {
+          res.status(200).json(toysByCategory);
+        }
+      } else {
+        console.log("here");
+        const toysByEmail = await toySchema.find({
+          sellerEmail: req.query.email,
+        });
+        return res.status(200).json(toysByEmail);
+      }
+    }
+
+    if (category && !email) {
       const toysByCategory = await toySchema.find({
         category: req.query.category,
       });
@@ -61,7 +93,9 @@ const getToys = async (req, res) => {
       } else {
         res.status(200).json(toysByCategory);
       }
-    } else {
+    }
+
+    if (!email && !category) {
       const toys = await toySchema.find();
 
       res.status(200).json(toys);
@@ -77,7 +111,11 @@ const getToys = async (req, res) => {
  */
 const getSingleToy = async (req, res) => {
   try {
-    const toySingle = await toySchema.findOne({ _id: req.params.id });
+    console.log("ggg" + req.params.id);
+    const id = req.params.id;
+    const toySingle = await toySchema.findById(id).exec();
+    //const toySingle = await toySchema.find({ _id:id });
+    console.log(toySingle);
     res.status(200).json(toySingle);
   } catch (error) {
     res.status(500).send(error);
@@ -88,7 +126,7 @@ const getSingleToy = async (req, res) => {
  * (read)
  * for getting toys by category and subcategory
  */
-const getToysByCategoryOrSC = async (req, res) => {};
+
 
 /**
  * (Update)
@@ -96,16 +134,20 @@ const getToysByCategoryOrSC = async (req, res) => {};
  */
 const updateToy = async (req, res) => {
   try {
-    const toyUpdate = await User.findOne({ _id: req.params.id });
-    (toyUpdate.name = req?.body?.name),
-      (toyUpdate.sellerName = req?.body?.sellerName),
-      (toyUpdate.sellerEmail = req?.body?.sellerEmail),
-      (toyUpdate.sellerImage = req?.body?.sellerImage),
-      (toyUpdate.toyImage = req?.body?.toyImage),
-      (toyUpdate.category = req?.body?.category),
-      (toyUpdate.subcategory = req?.body?.subCategory),
-      (toyUpdate.inStock = req?.body?.inStock),
-      userUpdate.save();
+    console.log(req.body)
+    const id = req.params.id;
+    const toyUpdate = await toySchema.findById(id).exec();
+
+    toyUpdate.name = req?.body?.name;
+    toyUpdate.sellerName = req?.body?.sellerName;
+    toyUpdate.sellerEmail = req?.body?.sellerEmail;
+    toyUpdate.sellerImage = req?.body?.sellerImage;
+    toyUpdate.toyImage = req?.body?.toyImage;
+    toyUpdate.category = req?.body?.category;
+    toyUpdate.subcategory = req?.body?.subcategory;
+    toyUpdate.inStock = req?.body?.inStock;
+    toyUpdate.save();
+    console.log("pp"+ toyUpdate);
     res.status(200).json(toyUpdate);
   } catch (error) {
     res.status(500).send(error);

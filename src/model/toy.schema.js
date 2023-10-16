@@ -3,29 +3,42 @@ const mongoose = require("mongoose");
 const toySchema = mongoose.Schema({
   name: {
     type: String,
-    require: true,
+    //require: true,
   },
   sellerName: {
     type: String,
-    require: true,
+    //require: true,
   },
   sellerEmail: {
     type: String,
-    require: true,
+    //require: true,
   },
   sellerImage: {},
-  toyImage: {},
+  toyImage: [],
   category: {
     type: String,
-    require: true,
+    //require: true,
   },
   subcategory: {
     type: String,
-    require: true,
+    //require: true,
   },
   inStock: {
     type: String,
-    require: true,
+    //require: true,
+  },
+  description: {
+    type: String,
+    //require: true,
+  },
+  rate: {
+    type: Number,
+  },
+  feedback: {
+    type: String,
+  },
+  price: {
+    type: Number,
   },
 });
 
